@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
+from .forms import StaffCreationForm
 
 # Create your views here.
 
@@ -42,3 +43,14 @@ def userLogin(request):
     
     # Render the login page with the form
     return render(request, 'accounts/login.html', {'form': form})
+
+
+def createStaff(request):
+    if request.method == 'POST':
+        form = StaffCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('create_staff')  # Redirect to login page after successful registration
+    else:
+        form = StaffCreationForm()
+    return render(request, 'accounts/create_staff.html', {'form': form})
