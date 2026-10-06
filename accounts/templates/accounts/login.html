@@ -1,0 +1,41 @@
+<!--SO-2 Build and design the login screen UI for users to enter their username and password-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hospital Management System Login</title>
+</head>                 
+
+<body style="font-family:'Times New Roman', Times, serif; 
+        background-color: rgb(254, 178, 214); 
+        display: flex; justify-content: center; 
+        align-items: center; height: 100vh; 
+        margin: 0;">
+    
+    <div style="background-color: white; padding: 40px; 
+                border-radius: 10px; 
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+                width: 300px;">
+
+        <h2 style="text-align: center; margin-bottom: 20px;">Login</h2>
+        
+        {% if error %}
+            <p style="color: #d9534f; font-size: 14px; text-align: center; margin-bottom: 15px;">{{ error }}</p>
+        {% endif %}
+
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div style="margin-bottom: 15px;">
+                <label for="username" style="display: block; margin-bottom: 5px;">Username:</label>
+                <input type="text" id="username" name="username" required style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box;">
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label for="password" style="display: block; margin-bottom: 5px;">Password:</label>
+                <input type="password" id="password" name="password" required style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box;">
+            </div>
+            <button type="submit" style="width: 100%; padding: 10px; background-color: rgb(254, 178, 214); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Login</button>
+        </form>
+    </div>
+</body>
+</html>
