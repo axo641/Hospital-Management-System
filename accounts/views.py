@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
+from .forms import CustomUserCreationForm
 
 # Create your views here.
 
@@ -42,3 +43,28 @@ def userLogin(request):
     
     # Render the login page with the form
     return render(request, 'accounts/login.html', {'form': form})
+
+# SO-4: Set-up user accounts database where current users reside and new 
+# users can be added
+def register(request):
+    # Determine whether user is submitting data via POST or GET request
+    if request.method == 'POST':
+
+        # Handle the registration using the CustomUserCreationForm for POST submissions
+        form = CustomUserCreationForm(request.POST)
+
+        # Check if the form is valid
+        if form.is_valid():
+
+            # Save the new user to the database
+            user = form.save()
+
+            # Log the user in and redirect to the home page
+            login(request, user)
+            return redirect('home')
+    else:
+        # If the request method is GET, render the registration form
+        form = CustomUserCreationForm()
+
+    # Render the registration page with the form
+    return render(request, 'accounts/register.html', {'form': form})

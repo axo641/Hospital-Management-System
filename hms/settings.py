@@ -83,7 +83,7 @@ DATABASES = {
 }
 
 
-# Password validation
+# SO-3: Implement secure password protection
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -128,5 +128,3 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
-
-AUTH_USER_MODEL = 'accounts.User'
