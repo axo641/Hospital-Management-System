@@ -1,21 +1,148 @@
-<h2>Welcome, {{ user.username }} ({{ user_role }})</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hospital Management System - Dashboard</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: rgb(254, 178, 214);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .dashboard-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            max-width: 90%;
+        }
+        
+        h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #333;
+        }
 
-{% if 'register_patient' in role_perms %}
-  <p>Register a patient</p>
-{% endif %}
+        .role-info {
+            text-align: center;
+            font-size: 14px;
+            color: #b05882;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        
+        .menu-section {
+            margin-bottom: 15px;
+        }
+        
+        .menu-item {
+            padding: 12px;
+            margin: 10px 0;
+            background-color: rgb(254, 178, 214);
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .menu-item:hover {
+            background-color: rgb(230, 150, 190);
+        }
+        
+        .menu-item a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .menu-item a:hover {
+            text-decoration: underline;
+        }
 
-{% if 'search_patient' in role_perms %}
-  <p>Search patients</p>
-{% endif %}
+        .no-permissions {
+            background-color: #fff8fb;
+            border: 2px solid #fdb2d6;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            color: #b05882;
+            margin: 20px 0;
+        }
+        
+        .logout-btn {
+            background-color: #d9534f;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .logout-btn a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c9302c;
+        }
+    </style>
+</head>                 
 
-{% if 'book_appointment' in role_perms %}
-  <p>Book an appointment</p>
-{% endif %}
-
-{% if 'view_medical_records' in role_perms %}
-  <p>View medical records</p>
-{% endif %}
-
-{% if 'manage_staff' in role_perms %}
-  <p><a href="/admin/">Manage staff accounts</a></p>
-{% endif %}
+<body>
+    <div class="dashboard-container">
+        <h2>Welcome, {{ user.username }}</h2>
+        <div class="role-info">Role: {{ user_role }}</div>
+        
+        {% if role_perms %}
+            <div class="menu-section">
+                {% if 'register_patient' in role_perms %}
+                    <div class="menu-item">
+                        <a href="/patients/register/">Register a patient</a>
+                    </div>
+                {% endif %}
+                
+                {% if 'search_patient' in role_perms %}
+                    <div class="menu-item">
+                        <a href="/patients/search/">Search patients</a>
+                    </div>
+                {% endif %}
+                
+                {% if 'book_appointment' in role_perms %}
+                    <div class="menu-item">
+                        <a href="/appointments/">Appointments</a>
+                    </div>
+                {% endif %}
+                
+                {% if 'view_medical_records' in role_perms %}
+                    <div class="menu-item">
+                        <a href="#">View medical records</a>
+                    </div>
+                {% endif %}
+                
+                {% if 'manage_staff' in role_perms %}
+                    <div class="menu-item">
+                        <a href="/accounts/staff/">Manage staff accounts</a>
+                    </div>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="no-permissions">
+                <p>No role assigned. Please contact your administrator to assign you a role.</p>
+            </div>
+        {% endif %}
+        
+        <div class="logout-btn">
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+    </div>
+</body>
+</html>

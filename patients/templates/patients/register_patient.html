@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Create Staff</title>
+    <title>Register Patient</title>
     <style>
         body {
             font-family: "Times New Roman", Times, serif;
@@ -10,7 +10,7 @@
             padding: 30px;
         }
 
-        .container {
+        .box {
             max-width: 700px;
             margin: 0 auto;
             background: white;
@@ -32,10 +32,9 @@
 
         label {
             font-weight: bold;
-            color: #333;
         }
 
-        input, select {
+        input, textarea, select {
             width: 100%;
             padding: 8px;
             border: 1px solid #d4a5bc;
@@ -52,54 +51,23 @@
             cursor: pointer;
             font-family: "Times New Roman", Times, serif;
             font-size: 16px;
-            font-weight: bold;
-        }
-
-        button:hover {
-            background-color: #f59bc8;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        .button-group button {
-            flex: 1;
-        }
-
-        .cancel-btn {
-            background-color: #ccc;
-            border-color: #999;
-        }
-
-        .cancel-btn:hover {
-            background-color: #bbb;
         }
 
         .errorlist {
             color: #c00;
             list-style: none;
             padding: 0;
-            margin: 0 0 10px 0;
-        }
-
-        ul {
-            margin: 5px 0;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Create Staff Account</h2>
+    <div class="box">
+        <h2>Register Patient</h2>
 
-        <form method="post">
+        <form method="POST">
             {% csrf_token %}
             {{ form.as_p }}
-            <div class="button-group">
-                <button type="submit">Create Staff</button>
-                <button type="button" class="cancel-btn" onclick="window.location='/accounts/staff/'">Cancel</button>
-            </div>
+            <button type="submit">Save Patient</button>
         </form>
     </div>
 </body>

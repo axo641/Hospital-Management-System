@@ -4,10 +4,11 @@ from .models import Patient
 class PatientRegistrationForm(forms.ModelForm):
     class Meta:
         model = Patient
-        fields = ['first_name', 'last_name', 'date_of_birth', 'gender',
-                  'phone', 'email', 'address', 'health_card_number']
+        fields = ['first_name', 'last_name', 'date_of_birth', 'gender', 'address', 'phone_number', 'email', 'medical_history']
         widgets = {
             'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
+            'address': forms.Textarea(attrs={'rows': 3}),
+            'medical_history': forms.Textarea(attrs={'rows': 3}),
         }
 
     def clean(self):
@@ -15,9 +16,8 @@ class PatientRegistrationForm(forms.ModelForm):
         first = cleaned.get('first_name')
         last = cleaned.get('last_name')
         dob = cleaned.get('date_of_birth')
-        hcn = cleaned.get('health_card_number')
+        email = cleaned.get('email')
 
-        # Duplicate check 1: same name + date of birth
         if first and last and dob:
             if Patient.objects.filter(
                 first_name__iexact=first,
@@ -28,10 +28,9 @@ class PatientRegistrationForm(forms.ModelForm):
                     "A patient file already exists for this name and date of birth."
                 )
 
-        # Duplicate check 2: same health card number
-        if hcn and Patient.objects.filter(health_card_number=hcn).exists():
+        if email and Patient.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError(
-                "A patient file already exists with this health card number."
+                "A patient already exists with this email address."
             )
 
         return cleaned

@@ -9,16 +9,36 @@ ROLE_PERMISSIONS = {
         'manage_staff', 'register_patient', 'search_patient',
         'book_appointment', 'view_medical_records',
     },
-    'RECEPTIONIST': {
-        'register_patient', 'search_patient', 'book_appointment',
-    },
     'PHYSICIAN': {
-        'search_patient', 'view_medical_records', 'view_appointments',
+        'search_patient', 'view_medical_records', 'book_appointment',
+    },
+    'SURGEON': {
+        'search_patient', 'view_medical_records', 'book_appointment',
     },
     'NURSE': {
-        'search_patient', 'view_medical_records', 'view_appointments',
+        'search_patient', 'view_medical_records', 'book_appointment',
     },
-    # add the other SO-8 roles here as needed
+    'PHARMACIST': {
+        'search_patient', 'view_medical_records',
+    },
+    'PHYSIOTHERAPIST': {
+        'search_patient', 'view_medical_records', 'book_appointment',
+    },
+    'RADIOLOGIST': {
+        'search_patient', 'view_medical_records', 'book_appointment',
+    },
+    'TECHNICIAN': {
+        'search_patient', 'view_medical_records',
+    },
+    'EXECUTIVE': {
+        'manage_staff', 'search_patient', 'view_medical_records',
+    },
+    'CLERK': {
+        'register_patient', 'search_patient', 'book_appointment',
+    },
+    'OFFICE_ASSISTANT': {
+        'register_patient', 'search_patient', 'book_appointment',
+    },
 }
 
 
@@ -35,10 +55,12 @@ def get_permissions(user):
         return set()
     if user.is_superuser:
         return set().union(*ROLE_PERMISSIONS.values())
-    return ROLE_PERMISSIONS.get(get_user_role(user), set())
+    user_role = get_user_role(user)
+    return ROLE_PERMISSIONS.get(user_role, set())
 
 
 def has_permission(user, permission):
+    """Check if user has a specific permission."""
     return permission in get_permissions(user)
 
 
@@ -47,8 +69,12 @@ def permission_required_for(permission):
     def decorator(view):
         @wraps(view)
         def wrapper(request, *args, **kwargs):
+            if not request.user.is_authenticated:
+                # User not logged in, redirect to login
+                return login_required(lambda r: None)(request)
             if not has_permission(request.user, permission):
-                raise PermissionDenied   # shows a 403 page
+                # User logged in but doesn't have permission
+                raise PermissionDenied
             return view(request, *args, **kwargs)
-        return login_required(wrapper)   # not logged in -> redirected to login
+        return wrapper
     return decorator

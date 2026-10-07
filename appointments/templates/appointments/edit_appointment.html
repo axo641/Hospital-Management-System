@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Create Staff</title>
+    <title>Edit Appointment</title>
     <style>
         body {
             font-family: "Times New Roman", Times, serif;
@@ -76,29 +76,18 @@
         .cancel-btn:hover {
             background-color: #bbb;
         }
-
-        .errorlist {
-            color: #c00;
-            list-style: none;
-            padding: 0;
-            margin: 0 0 10px 0;
-        }
-
-        ul {
-            margin: 5px 0;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Create Staff Account</h2>
+        <h2>Edit Appointment</h2>
 
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
             <div class="button-group">
-                <button type="submit">Create Staff</button>
-                <button type="button" class="cancel-btn" onclick="window.location='/accounts/staff/'">Cancel</button>
+                <button type="submit">Save Changes</button>
+                <button type="button" class="cancel-btn" onclick="window.location='/appointments/'">Cancel</button>
             </div>
         </form>
     </div>

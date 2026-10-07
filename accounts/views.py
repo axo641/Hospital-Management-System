@@ -1,81 +1,108 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import CustomUserCreationForm, UserCreationForm
+from django.contrib.auth.decorators import login_required
+from .forms import CustomUserCreationForm, StaffCreationForm
+from .models import User
+from .permissions import permission_required_for
 
 # Create your views here.
 
-# SO-1: Build backend logic for the user to login
 def userLogin(request):
-    # Determine whether user is submitting data via POST or GET request
+    """Handle user login - tracks logged in user automatically via request.user"""
     if request.method == 'POST':
-        
-        # Handle the login using Django's built-in AuthenticationForm for POST submissions
         form = AuthenticationForm(request, data=request.POST)
 
-        # Check if the form is valid
         if form.is_valid():
-            # Extract the username and password from the form data
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-
-            # Check if the user exists and the credentials are correct
             user = authenticate(request, username=username, password=password)
 
-            # If the user is authenticated, log them in and redirect to the home page
             if user is not None:
                 login(request, user)
+                # User is now tracked in request.user and session
                 return redirect('home')
-
-            # If the user is not authenticated, return an 'invalid login' error message
             else:
-                return render(request, 'accounts/login.html', 
+                return render(request, 'accounts/login.html',
                               {'form': form, 'error': 'Invalid username or password.'})
-        
-        # If the form is not valid, return an 'invalid login' error message
         else:
-            return render(request, 'accounts/login.html', 
+            return render(request, 'accounts/login.html',
                           {'form': form, 'error': 'Invalid username or password.'})
-    
-    # If the request method is GET, render the login form
     else:
         form = AuthenticationForm()
-    
-    # Render the login page with the form
+
     return render(request, 'accounts/login.html', {'form': form})
 
-# SO-4: Set-up user accounts database where current users reside and new 
-# users can be added
+
 def register(request):
-    # Determine whether user is submitting data via POST or GET request
     if request.method == 'POST':
-
-        # Handle the registration using the CustomUserCreationForm for POST submissions
         form = CustomUserCreationForm(request.POST)
-
-        # Check if the form is valid
         if form.is_valid():
-
-            # Save the new user to the database
             user = form.save()
-
-            # Log the user in and redirect to the home page
             login(request, user)
             return redirect('home')
     else:
-        # If the request method is GET, render the registration form
         form = CustomUserCreationForm()
 
-    # Render the registration page with the form
     return render(request, 'accounts/register.html', {'form': form})
 
-def createStaff(request):
+
+@login_required
+@permission_required_for('manage_staff')
+def staff_list(request):
+    """Display list of all staff members - Only accessible to ADMIN and EXECUTIVE"""
+    staff = User.objects.all().order_by('first_name')
+    return render(request, 'accounts/staff_list.html', {'staff': staff})
+
+
+@login_required
+@permission_required_for('manage_staff')
+def create_staff(request):
+    """Create a new staff member - Only accessible to ADMIN and EXECUTIVE"""
     if request.method == 'POST':
         form = StaffCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('create_staff')  # Redirect to login page after successful registration
+            return redirect('staff_list')
     else:
         form = StaffCreationForm()
+
     return render(request, 'accounts/create_staff.html', {'form': form})
 
+
+@login_required
+@permission_required_for('manage_staff')
+def edit_staff(request, staff_id):
+    """Edit an existing staff member - Only accessible to ADMIN and EXECUTIVE"""
+    staff = get_object_or_404(User, id=staff_id)
+    
+    if request.method == 'POST':
+        form = StaffCreationForm(request.POST, instance=staff)
+        if form.is_valid():
+            if not form.cleaned_data.get('password'):
+                form.instance.set_password(staff.password)
+            form.save()
+            return redirect('staff_list')
+    else:
+        form = StaffCreationForm(instance=staff)
+
+    return render(request, 'accounts/edit_staff.html', {'form': form, 'staff': staff})
+
+
+@login_required
+@permission_required_for('manage_staff')
+def delete_staff(request, staff_id):
+    """Delete a staff member - Only accessible to ADMIN and EXECUTIVE"""
+    staff = get_object_or_404(User, id=staff_id)
+    
+    if request.method == 'POST':
+        staff.delete()
+        return redirect('staff_list')
+    
+    return render(request, 'accounts/delete_staff.html', {'staff': staff})
+
+
+def userLogout(request):
+    """Logout user - clears session and tracked user"""
+    logout(request)
+    return redirect('login')

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Create Staff</title>
+    <title>Delete Staff</title>
     <style>
         body {
             font-family: "Times New Roman", Times, serif;
@@ -11,7 +11,7 @@
         }
 
         .container {
-            max-width: 700px;
+            max-width: 500px;
             margin: 0 auto;
             background: white;
             padding: 25px;
@@ -24,39 +24,13 @@
             margin-top: 0;
         }
 
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        label {
-            font-weight: bold;
-            color: #333;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #d4a5bc;
+        .warning {
+            background-color: #ffebee;
+            border: 1px solid #f59bc8;
+            padding: 15px;
             border-radius: 4px;
-            box-sizing: border-box;
-            font-family: "Times New Roman", Times, serif;
-        }
-
-        button {
-            padding: 10px 15px;
-            background-color: #fdb2d6;
-            border: 1px solid #b05882;
-            border-radius: 5px;
-            cursor: pointer;
-            font-family: "Times New Roman", Times, serif;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        button:hover {
-            background-color: #f59bc8;
+            margin-bottom: 20px;
+            color: #c00;
         }
 
         .button-group {
@@ -64,40 +38,51 @@
             gap: 10px;
         }
 
-        .button-group button {
+        button {
             flex: 1;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: "Times New Roman", Times, serif;
+            font-size: 16px;
+            font-weight: bold;
+            border: 1px solid;
+        }
+
+        .delete-btn {
+            background-color: #d9534f;
+            border-color: #ac2925;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #c9302c;
         }
 
         .cancel-btn {
             background-color: #ccc;
             border-color: #999;
+            color: #333;
         }
 
         .cancel-btn:hover {
             background-color: #bbb;
         }
-
-        .errorlist {
-            color: #c00;
-            list-style: none;
-            padding: 0;
-            margin: 0 0 10px 0;
-        }
-
-        ul {
-            margin: 5px 0;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Create Staff Account</h2>
+        <h2>Delete Staff</h2>
+
+        <div class="warning">
+            <p><strong>Warning:</strong> Are you sure you want to delete <strong>{{ staff.first_name }} {{ staff.last_name }}</strong>?</p>
+            <p>This action cannot be undone. This user will no longer be able to log in.</p>
+        </div>
 
         <form method="post">
             {% csrf_token %}
-            {{ form.as_p }}
             <div class="button-group">
-                <button type="submit">Create Staff</button>
+                <button type="submit" class="delete-btn">Yes, Delete Staff</button>
                 <button type="button" class="cancel-btn" onclick="window.location='/accounts/staff/'">Cancel</button>
             </div>
         </form>
