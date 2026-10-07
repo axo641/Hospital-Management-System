@@ -1,0 +1,21 @@
+<h2>Welcome, {{ user.username }} ({{ user_role }})</h2>
+
+{% if 'register_patient' in role_perms %}
+  <p>Register a patient</p>
+{% endif %}
+
+{% if 'search_patient' in role_perms %}
+  <p>Search patients</p>
+{% endif %}
+
+{% if 'book_appointment' in role_perms %}
+  <p>Book an appointment</p>
+{% endif %}
+
+{% if 'view_medical_records' in role_perms %}
+  <p>View medical records</p>
+{% endif %}
+
+{% if 'manage_staff' in role_perms %}
+  <p><a href="/admin/">Manage staff accounts</a></p>
+{% endif %}
