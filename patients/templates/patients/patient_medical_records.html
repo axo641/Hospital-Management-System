@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient Medical Records</title>
+    <style>
+        body {
+            font-family: "Times New Roman", Times, serif;
+            background-color: #fff8fb;
+            color: #333;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border: 2px solid #fdb2d6;
+            border-radius: 8px;
+        }
+
+        h2 {
+            color: #b05882;
+            margin-top: 0;
+        }
+
+        .patient-info {
+            background-color: #fff8fb;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #fdb2d6;
+        }
+
+        .patient-info p {
+            margin: 5px 0;
+        }
+
+        .button-group {
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            background-color: #fdb2d6;
+            border: 1px solid #b05882;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-family: "Times New Roman", Times, serif;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            background-color: #f59bc8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #fdb2d6;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #fdb2d6;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fff8fb;
+        }
+
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .actions a {
+            padding: 5px 10px;
+            background-color: #fdb2d6;
+            border: 1px solid #b05882;
+            border-radius: 3px;
+            text-decoration: none;
+            color: white;
+            font-size: 12px;
+        }
+
+        .actions a:hover {
+            background-color: #f59bc8;
+        }
+
+        .actions a.delete {
+            background-color: #d9534f;
+            border-color: #ac2925;
+        }
+
+        .actions a.delete:hover {
+            background-color: #c9302c;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #b05882;
+            padding: 20px;
+            background-color: #fff8fb;
+            border: 1px solid #fdb2d6;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Medical Records for {{ patient.first_name }} {{ patient.last_name }}</h2>
+
+        <div class="patient-info">
+            <p><strong>Patient ID:</strong> {{ patient.id }}</p>
+            <p><strong>Email:</strong> {{ patient.email }}</p>
+            <p><strong>Phone:</strong> {{ patient.phone_number }}</p>
+            <p><strong>Date of Birth:</strong> {{ patient.date_of_birth }}</p>
+        </div>
+
+        <div class="button-group">
+            <a href="/patients/medical-records/{{ patient.id }}/add/" class="btn">+ Add Medical Record</a>
+            <a href="/patients/medical-records/" class="btn">Back to Patient List</a>
+        </div>
+
+        {% if medical_records %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Record Date</th>
+                        <th>Uploaded Date</th>
+                        <th>File</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in medical_records %}
+                    <tr>
+                        <td>{{ record.title }}</td>
+                        <td>{{ record.record_date }}</td>
+                        <td>{{ record.uploaded_date|date:"M d, Y g:i A" }}</td>
+                        <td>
+                            <a href="{{ record.file.url }}" target="_blank">Download</a>
+                        </td>
+                        <td>
+                            <div class="actions">
+                                <a href="/patients/medical-records/{{ record.id }}/delete/" class="delete">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-message">
+                <p>No medical records found. <a href="/patients/medical-records/{{ patient.id }}/add/">Add one now</a></p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

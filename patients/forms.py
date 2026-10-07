@@ -1,5 +1,6 @@
 from django import forms
-from .models import Patient
+from .models import Patient, MedicalRecord
+
 
 class PatientRegistrationForm(forms.ModelForm):
     class Meta:
@@ -34,3 +35,12 @@ class PatientRegistrationForm(forms.ModelForm):
             )
 
         return cleaned
+
+
+class MedicalRecordForm(forms.ModelForm):
+    class Meta:
+        model = MedicalRecord
+        fields = ['title', 'description', 'file']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 3}),
+        }
