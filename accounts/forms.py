@@ -13,11 +13,3 @@ class CustomUserCreationForm(UserCreationForm):
         model = User
         # Use Django's standard field names: first_name and last_name
         fields = ["first_name", "last_name","username", "email"]
-=======
-from djando.contrib.auth.forms import UserCreationForm
-from .models import User
-
-class StaffCreationForm(UserCreationForm):
-    class Meta:
-        model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'role')
