@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from .models import Patient, MedicalRecord
-from .forms import PatientRegistrationForm, MedicalRecordForm
-from accounts.permissions import permission_required_for
+from .forms import PatientRegistrationForm, MedicalRecordForm, PatientUpdateForm
+from accounts.permissions import permission_required_for, has_permission
 
 
 @login_required
@@ -21,8 +21,9 @@ def search_patients(request):
         )
 
     return render(request, 'patients/patient_search.html', {
-        'patients': patients, 
-        'query': query
+        'patients': patients,
+        'query': query,
+        'can_edit_patient': has_permission(request.user, 'edit_patient'),
     })
 
 
@@ -97,4 +98,22 @@ def delete_medical_record(request, record_id):
     
     return render(request, 'patients/delete_medical_record.html', {
         'medical_record': medical_record,
+    })
+
+@login_required
+@permission_required_for('edit_patient')
+def edit_patient(request, patient_id):
+    patient = get_object_or_404(Patient, id=patient_id)
+    
+    if request.method == 'POST':
+        form = PatientUpdateForm(request.POST, instance=patient)
+        if form.is_valid():
+            form.save()
+            return redirect('patient_search')
+    else:
+        form = PatientUpdateForm(instance=patient)
+
+    return render(request, 'patients/edit_patient.html', {
+        'form': form,
+        'patient': patient,
     })

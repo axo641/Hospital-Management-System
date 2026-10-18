@@ -7,13 +7,13 @@ from django.core.exceptions import PermissionDenied
 ROLE_PERMISSIONS = {
     'ADMIN': {
         'manage_staff', 'register_patient', 'search_patient',
-        'book_appointment', 'view_medical_records',
+        'book_appointment', 'view_medical_records', 'edit_patient',
     },
     'PHYSICIAN': {
-        'search_patient', 'view_medical_records', 'book_appointment',
+        'search_patient', 'view_medical_records', 'book_appointment', 'view_doctor_schedule',
     },
     'SURGEON': {
-        'search_patient', 'view_medical_records', 'book_appointment',
+        'search_patient', 'view_medical_records', 'book_appointment', 'view_doctor_schedule',
     },
     'NURSE': {
         'search_patient', 'view_medical_records', 'book_appointment',
@@ -25,7 +25,7 @@ ROLE_PERMISSIONS = {
         'search_patient', 'view_medical_records', 'book_appointment',
     },
     'RADIOLOGIST': {
-        'search_patient', 'view_medical_records', 'book_appointment',
+        'search_patient', 'view_medical_records', 'book_appointment', 'view_doctor_schedule',
     },
     'TECHNICIAN': {
         'search_patient', 'view_medical_records',
@@ -35,9 +35,11 @@ ROLE_PERMISSIONS = {
     },
     'CLERK': {
         'register_patient', 'search_patient', 'book_appointment',
+        'edit_patient',
     },
     'OFFICE_ASSISTANT': {
         'register_patient', 'search_patient', 'book_appointment',
+        'edit_patient',
     },
 }
 

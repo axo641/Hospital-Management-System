@@ -70,6 +70,9 @@ the patient database and it displays the results effectively-->
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Email</th>
+                    {% if can_edit_patient %}
+                        <th>Actions</th>
+                    {% endif %}
                 </tr>
                 {% for p in patients %}
                 <tr>
@@ -77,6 +80,14 @@ the patient database and it displays the results effectively-->
                     <td>{{ p.first_name }}</td>
                     <td>{{ p.last_name }}</td>
                     <td>{{ p.email }}</td>
+                    {% if can_edit_patient %}
+                        <td>
+                            <a href="{% url 'edit_patient' p.id %}"
+                               style="display: inline-block; padding: 5px 10px; background-color: #fdb2d6; border: 1px solid #b05882; color: #333; text-decoration: none;">
+                               Edit
+                            </a>
+                        </td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </table>

@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Doctor Schedule</title>
+    <style>
+        body {
+            font-family: "Times New Roman", Times, serif;
+            background-color: #fff8fb;
+            color: #333;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border: 2px solid #fdb2d6;
+            border-radius: 8px;
+        }
+
+        h2 {
+            color: #b05882;
+            margin-top: 0;
+        }
+
+        .button-group {
+            margin: 20px 0;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            background-color: #fdb2d6;
+            border: 1px solid #b05882;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            color: #333;
+            font-family: "Times New Roman", Times, serif;
+            font-weight: bold;
+            margin-right: 10px;
+            margin-bottom: 8px;
+        }
+
+        .btn:hover {
+            background-color: #f59bc8;
+        }
+
+        .btn.active {
+            background-color: #b05882;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #fdb2d6;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #fdb2d6;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fff8fb;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #b05882;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>My Appointment Schedule</h2>
+
+        <p>
+            Welcome, Dr. {{ request.user.first_name }}
+            {{ request.user.last_name }}
+        </p>
+
+        <div class="button-group">
+            <a href="{% url 'doctor_schedule' %}?view=today"
+               class="btn {% if view_type == 'today' %}active{% endif %}">
+                Today
+            </a>
+
+            <a href="{% url 'doctor_schedule' %}?view=week"
+               class="btn {% if view_type == 'week' %}active{% endif %}">
+                This Week
+            </a>
+
+            <a href="{% url 'appointment_list' %}" class="btn">
+                Back to Appointments
+            </a>
+        </div>
+
+        {% if view_type == 'today' %}
+            <h3>Appointments for {{ today|date:"F j, Y" }}</h3>
+        {% else %}
+            <h3>Appointments This Week</h3>
+        {% endif %}
+
+        {% if appointments %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Patient Name</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appointment in appointments %}
+                    <tr>
+                        <td>
+                            {{ appointment.patient.first_name }}
+                            {{ appointment.patient.last_name }}
+                        </td>
+                        <td>{{ appointment.date|date:"M d, Y" }}</td>
+                        <td>{{ appointment.time|time:"g:i A" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-message">
+                <p>No appointments scheduled for this period.</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

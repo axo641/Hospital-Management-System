@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from datetime import timedelta
+from django.utils import timezone
 from .forms import AppointmentForm
 from .models import Appointment
 from .models import Patient
-from accounts.permissions import permission_required_for
+from accounts.permissions import permission_required_for, has_permission
 
 
 @login_required
@@ -22,7 +24,7 @@ def appointment_list(request):
         # Admin, executives, clerks see all appointments
         appointments = Appointment.objects.all().order_by('date', 'time')
     
-    return render(request, 'appointments/appointment_list.html', {'appointments': appointments})
+    return render(request, 'appointments/appointment_list.html', {'appointments': appointments, 'can_view_doctor_schedule': has_permission(request.user, 'view_doctor_schedule')})
 
 
 @login_required
@@ -80,3 +82,25 @@ def delete_appointment(request, appointment_id):
         return redirect('appointment_list')
     
     return render(request, 'appointments/delete_appointment.html', {'appointment': appointment})
+
+@login_required
+@permission_required_for('view_doctor_schedule')
+def doctor_schedule(request):
+    today = timezone.localdate()
+    doctor = request.user
+    view_type = request.GET.get('view', 'today')
+
+    if view_type not in ['today', 'week']:
+        view_type = 'today'
+
+    appointments = Appointment.objects.filter(doctor=doctor)
+    
+    if view_type == 'week':
+        start_date = timedelta(days=today.weekday())  # Start of the week (Monday)
+        end_date = start_date + timedelta(days=6)
+        appointments = appointments.filter(date__range=[start_date, end_date])
+    else:
+        appointments = appointments.filter(date=today)
+
+    appointments = appointments.order_by('date', 'time')
+    return render(request, 'appointments/doctor_schedule.html', {'appointments': appointments, 'view_type': view_type, 'today' : today,})
