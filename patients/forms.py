@@ -1,5 +1,5 @@
 from django import forms
-from .models import Patient, MedicalRecord
+from .models import Patient, MedicalRecord, TestResult
 
 
 class PatientRegistrationForm(forms.ModelForm):
@@ -81,3 +81,13 @@ class PatientUpdateForm(forms.ModelForm):
             )
 
         return cleaned
+
+class TestResultForm(forms.ModelForm):
+    class Meta:
+        model = TestResult
+        fields = ['test_type', 'results', 'date_performed']
+        widgets = {
+            'test_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Complete Blood Count'}),
+            'results': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Enter results details...'}),
+            'date_performed': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }

@@ -128,11 +128,29 @@
                     </div>
                 {% endif %}
                 
+             
+                {% if 'enter_test_results' in role_perms %}
+                    <div class="menu-item">
+                        <a href="/patients/search/">Enter/View lab test results</a>
+                    </div>
+                {% endif %}
+                
                 {% if 'manage_staff' in role_perms %}
                     <div class="menu-item">
                         <a href="/accounts/staff/">Manage staff accounts</a>
                     </div>
+                    <!-- NEW REPORT GENERATION ACTION LINK FOR ADMINS -->
+                    <div class="menu-item">
+                        <a href="{% url 'generate_reports' %}">Generate Systems Report</a>
+                    </div>
                 {% endif %}
+           
+                {% if user_role == 'PATIENT' %}
+                    <div class="menu-item" style="background-color: rgb(254, 178, 214);">
+                        <a href="{% url 'patient_appointments_dashboard' %}">My Upcoming Appointments</a>
+                    </div>
+                {% endif %}
+
             </div>
         {% else %}
             <div class="no-permissions">

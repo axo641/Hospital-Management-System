@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirm Cancellation Request</title>
+    <style>
+        body { font-family: "Times New Roman", Times, serif; background-color: #fff8fb; padding: 50px; }
+        .modal-box { max-width: 500px; margin: 0 auto; background: white; padding: 30px; border: 2px solid #fdb2d6; text-align: center; }
+        h3 { color: #b05882; }
+        .btn-group { display: flex; justify-content: center; gap: 15px; margin-top: 25px; }
+        .confirm-btn { padding: 10px 20px; background-color: #d9534f; border: 1px solid #b03a37; color: white; font-weight: bold; cursor: pointer; text-decoration: none; border-radius: 4px; }
+        .back-btn { padding: 10px 20px; background-color: #ffb5db; border: 1px solid #4a154b; color: #4a154b; font-weight: bold; text-decoration: none; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="modal-box">
+    <h3>Request Appointment Cancellation?</h3>
+    <p>Are you sure you want to request a cancellation for your upcoming session on {{ appointment.date }} at {{ appointment.time }}?</p>
+    
+    <form method="POST">
+        {% csrf_token %}
+        <div class="btn-group">
+            <a href="{% url 'patient_appointments_dashboard' %}" class="back-btn">No, Keep Appointment</a>
+            <button type="submit" class="confirm-btn">Yes, Request Cancellation</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

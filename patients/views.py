@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-from .models import Patient, MedicalRecord
-from .forms import PatientRegistrationForm, MedicalRecordForm, PatientUpdateForm
+from .models import Patient, MedicalRecord, TestResult
+from .forms import PatientRegistrationForm, MedicalRecordForm, PatientUpdateForm, TestResultForm
 from accounts.permissions import permission_required_for, has_permission
 
 
@@ -24,6 +25,7 @@ def search_patients(request):
         'patients': patients,
         'query': query,
         'can_edit_patient': has_permission(request.user, 'edit_patient'),
+        'can_enter_results': has_permission(request.user, 'enter_test_results'),  # Added context permission
     })
 
 
@@ -100,6 +102,7 @@ def delete_medical_record(request, record_id):
         'medical_record': medical_record,
     })
 
+
 @login_required
 @permission_required_for('edit_patient')
 def edit_patient(request, patient_id):
@@ -117,3 +120,32 @@ def edit_patient(request, patient_id):
         'form': form,
         'patient': patient,
     })
+
+
+@login_required
+@permission_required_for('enter_test_results')
+def enter_test_results(request, patient_id):
+    """View and submit lab diagnostic entries for a specified patient Profile"""
+    patient = get_object_or_404(Patient, id=patient_id)
+    
+    if request.method == 'POST':
+        form = TestResultForm(request.POST)
+        if form.is_valid():
+            # Create object but don't commit to DB yet so we can attach the patient
+            test_result = form.save(commit=False)
+            test_result.patient = patient
+            test_result.save()
+            
+            messages.success(request, f"Test results saved for {patient}.")
+            return redirect('enter_test_results', patient_id=patient.id)
+    else:
+        form = TestResultForm()
+        
+    previous_tests = patient.test_results.all().order_by('-date_performed')
+
+    context = {
+        'patient': patient,
+        'form': form,
+        'previous_tests': previous_tests,
+    }
+    return render(request, 'patients/enter_results.html', context)

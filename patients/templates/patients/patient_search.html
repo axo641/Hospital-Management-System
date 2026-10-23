@@ -13,7 +13,7 @@ the patient database and it displays the results effectively-->
             padding: 30px;
         }
         .box {
-            max-width: 700px;
+            max-width: 800px; /* Expanded slightly to give extra room for action items */
             margin: 0 auto;
             background: white;
             padding: 20px;
@@ -70,7 +70,7 @@ the patient database and it displays the results effectively-->
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Email</th>
-                    {% if can_edit_patient %}
+                    {% if can_edit_patient or can_enter_results %}
                         <th>Actions</th>
                     {% endif %}
                 </tr>
@@ -80,12 +80,21 @@ the patient database and it displays the results effectively-->
                     <td>{{ p.first_name }}</td>
                     <td>{{ p.last_name }}</td>
                     <td>{{ p.email }}</td>
-                    {% if can_edit_patient %}
+                    {% if can_edit_patient or can_enter_results %}
                         <td>
-                            <a href="{% url 'edit_patient' p.id %}"
-                               style="display: inline-block; padding: 5px 10px; background-color: #fdb2d6; border: 1px solid #b05882; color: #333; text-decoration: none;">
-                               Edit
-                            </a>
+                            {% if can_edit_patient %}
+                                <a href="{% url 'edit_patient' p.id %}"
+                                   style="display: inline-block; padding: 5px 10px; background-color: #fdb2d6; border: 1px solid #b05882; color: #333; text-decoration: none; margin-right: 5px;">
+                                   Edit
+                                </a>
+                            {% endif %}
+                            
+                            {% if can_enter_results %}
+                                <a href="{% url 'enter_test_results' p.id %}"
+                                   style="display: inline-block; padding: 5px 10px; background-color: #b05882; border: 1px solid #7c3a5a; color: white; text-decoration: none; font-weight: bold;">
+                                   + Lab Results
+                                </a>
+                            {% endif %}
                         </td>
                     {% endif %}
                 </tr>

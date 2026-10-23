@@ -11,6 +11,12 @@ class Appointment(models.Model):
     is_checked_in = models.BooleanField(default=False)
     arrival_time = models.DateTimeField(null=True, blank=True)
 
+    STATUS_CHOICES = [
+        ('SCHEDULED', 'Scheduled'),
+        ('CANCEL_REQUESTED', 'Cancellation Requested'),
+        ('CANCELLED', 'Cancelled'),
+    ]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='SCHEDULED')
+
     def __str__(self):
         return f"{self.patient} - {self.doctor} - {self.date} {self.time}"
-

@@ -14,5 +14,6 @@ class User(AbstractUser):
         EXECUTIVE = 'EXECUTIVE', 'Executive'
         CLERK = 'CLERK', 'Clerk'
         OFFICE_ASSISTANT = 'OFFICE_ASSISTANT', 'Office Assistant'
+        PATIENT = 'PATIENT', 'Patient'
 
     role = models.CharField(max_length=20, choices=Role.choices, blank=True, null=True)

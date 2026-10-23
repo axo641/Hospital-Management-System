@@ -1,6 +1,6 @@
 from django.db import models
+from django.utils import timezone
 
-# Create your models here.
 class Patient(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
@@ -30,3 +30,15 @@ class MedicalRecord(models.Model):
 
     def __str__(self):
         return f"{self.patient.first_name} {self.patient.last_name} - {self.title} ({self.uploaded_date.date()})"
+
+class TestResult(models.Model):
+    patient = models.ForeignKey('Patient', on_delete=models.CASCADE, related_name='test_results')
+    
+    test_type = models.CharField(max_length=100, help_text="e.g., Blood Count, Lipid Panel, X-Ray")
+    results = models.TextField(help_text="Enter the raw data, findings, or metrics here.")
+    date_performed = models.DateField(default=timezone.now)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.test_type} for {self.patient.first_name} {self.patient.last_name} on {self.date_performed}"
