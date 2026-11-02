@@ -42,3 +42,31 @@ class TestResult(models.Model):
 
     def __str__(self):
         return f"{self.test_type} for {self.patient.first_name} {self.patient.last_name} on {self.date_performed}"
+
+
+class Invoice(models.Model):
+
+    class PaymentStatus(models.TextChoices):
+        UNPAID = 'UNPAID', 'Unpaid'
+        PAID = 'PAID', 'Paid'
+
+    patient = models.ForeignKey(
+        Patient,
+        on_delete=models.CASCADE,
+        related_name='invoices'
+    )
+
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.TextField(blank=True)
+    issued_date = models.DateField(default=timezone.localdate)
+
+    payment_status = models.CharField(
+        max_length=10,
+        choices=PaymentStatus.choices,
+        default=PaymentStatus.UNPAID
+    )
+
+    paid_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Invoice #{self.id} - {self.patient} - {self.payment_status}"

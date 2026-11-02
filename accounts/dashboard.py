@@ -12,6 +12,7 @@ def dashboard(request):
     context = {
         'user_role': user_role if user_role else 'No Role Assigned',
         'role_perms': role_perms,
+        'is_admin': user.role == 'ADMIN',
     }
     
     return render(request, 'accounts/dashboard.html', context)

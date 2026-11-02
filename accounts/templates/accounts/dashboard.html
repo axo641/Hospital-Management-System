@@ -144,6 +144,19 @@
                         <a href="{% url 'generate_reports' %}">Generate Systems Report</a>
                     </div>
                 {% endif %}
+                {% if is_admin %}
+                    <div class="menu-item">
+                        <a href="{% url 'invoice_list' %}">
+                            Manage Patient Invoices
+                        </a>
+                    </div>
+
+                    <div class="menu-item">
+                        <a href="{% url 'daily_patient_volume' %}">
+                            Daily Patient Volume Dashboard
+                        </a>
+                    </div>
+                {% endif %}
            
                 {% if user_role == 'PATIENT' %}
                     <div class="menu-item" style="background-color: rgb(254, 178, 214);">

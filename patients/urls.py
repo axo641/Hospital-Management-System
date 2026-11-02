@@ -8,6 +8,8 @@ from .views import (
     delete_medical_record,
     edit_patient,
     enter_test_results,
+    invoice_list,
+    mark_invoice_paid,
 )
 
 urlpatterns = [
@@ -19,4 +21,6 @@ urlpatterns = [
     path('medical-records/<int:record_id>/delete/', delete_medical_record, name='delete_medical_record'),
     path('patients/<int:patient_id>/edit/', edit_patient, name='edit_patient'),
     path('patient/<int:patient_id>/enter-results/', enter_test_results, name='enter_test_results'),
+    path('invoices/', invoice_list, name='invoice_list'),
+    path('invoices/<int:invoice_id>/mark-paid/', mark_invoice_paid, name='mark_invoice_paid'),
 ]

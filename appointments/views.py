@@ -9,6 +9,8 @@ from .forms import AppointmentForm
 from .models import Appointment
 from .models import Patient
 from accounts.permissions import permission_required_for, has_permission
+from django.db.models import Count
+
 
 
 @login_required
@@ -244,4 +246,26 @@ def generate_reports(request):
         'start_date': start_date,
         'end_date': end_date,
         'status': status_filter,
+    })
+
+
+@login_required
+def daily_patient_volume(request):
+
+    if request.user.role != 'ADMIN':
+        from django.core.exceptions import PermissionDenied
+        raise PermissionDenied
+
+    appointments = Appointment.objects.exclude(
+        status='CANCELLED'
+    )
+    daily_volumes = (
+        appointments.values('date')
+        .annotate(patient_count=Count('patient', distinct=True))
+        .order_by('date')
+    )
+
+    return render(request, 'appointments/daily_patient_volume.html', {
+        'daily_volumes': daily_volumes,
+        'total_days': daily_volumes.count(),
     })

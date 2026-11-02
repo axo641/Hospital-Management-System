@@ -8,7 +8,8 @@ from .views import (
     check_patient_in,
     patient_appointments_dashboard,        
     request_appointment_cancellation,
-    generate_reports,    
+    generate_reports,
+    daily_patient_volume,
 )
 
 urlpatterns = [
@@ -21,4 +22,5 @@ urlpatterns = [
     path('my-appointments/', patient_appointments_dashboard, name='patient_appointments_dashboard'),
     path('my-appointments/<int:appointment_id>/request-cancel/', request_appointment_cancellation, name='request_appointment_cancellation'),
     path('reports/', generate_reports, name='generate_reports'),
+    path('patient-volume`/', daily_patient_volume, name='daily_patient_volume'),
 ]

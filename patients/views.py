@@ -2,9 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-from .models import Patient, MedicalRecord, TestResult
+from .models import Patient, MedicalRecord, TestResult, Invoice
 from .forms import PatientRegistrationForm, MedicalRecordForm, PatientUpdateForm, TestResultForm
 from accounts.permissions import permission_required_for, has_permission
+from django.core.exceptions import PermissionDenied
+from django.utils import timezone
 
 
 @login_required
@@ -149,3 +151,46 @@ def enter_test_results(request, patient_id):
         'previous_tests': previous_tests,
     }
     return render(request, 'patients/enter_results.html', context)
+
+
+@login_required
+def invoice_list(request):
+    """SO-44: Display patient invoices for administrators."""
+
+    if request.user.role != 'ADMIN':
+        raise PermissionDenied
+
+    invoices = Invoice.objects.select_related('patient').order_by(
+        '-issued_date', '-id'
+    )
+
+    return render(request, 'patients/invoice_list.html', {
+        'invoices': invoices,
+    })
+
+
+@login_required
+def mark_invoice_paid(request, invoice_id):
+
+    if request.user.role != 'ADMIN':
+        raise PermissionDenied
+
+    invoice = get_object_or_404(Invoice, id=invoice_id)
+
+    # Changes to payment status must only happen through POST.
+    if request.method != 'POST':
+        return redirect('invoice_list')
+
+    if invoice.payment_status == Invoice.PaymentStatus.PAID:
+        messages.info(request, "This invoice is already marked as paid.")
+    else:
+        invoice.payment_status = Invoice.PaymentStatus.PAID
+        invoice.paid_at = timezone.now()
+        invoice.save(update_fields=['payment_status', 'paid_at'])
+
+        messages.success(
+            request,
+            f"Invoice #{invoice.id} has been successfully marked as paid."
+        )
+
+    return redirect('invoice_list')
