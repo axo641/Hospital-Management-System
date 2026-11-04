@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Prescription - #{{ prescription.pk }}</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: rgb(254, 178, 214);
+            margin: 0;
+            padding: 30px;
+        }
+
+        .main-container {
+            background-color: white;
+            border: 2px solid rgb(254, 178, 214);
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            color: #8b264e;
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .back-btn {
+            background-color: transparent;
+            border: 2px solid #b05882;
+            color: #8b264e;
+            padding: 6px 14px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            transition: background-color 0.2s;
+        }
+
+        .back-btn:hover {
+            background-color: rgb(254, 178, 214);
+            color: white;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-card {
+            background-color: #fff8fb;
+            border: 1px solid rgb(254, 178, 214);
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .instructions-box {
+            background-color: #fff8fb;
+            border: 1px solid rgb(254, 178, 214);
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        select, textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 15px;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 100px;
+        }
+
+        .btn-save {
+            background-color: #b05882;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        .btn-save:hover {
+            background-color: #8b264e;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="header-section">
+        <h2>Prescription Safety Review & Status Update</h2>
+        <a href="{% url 'pharmacy:pharmacist_prescriptions' %}" class="back-btn">← Back to Queue</a>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-card">
+            <div class="info-label">Patient Name</div>
+            <div class="info-value"><strong>{{ prescription.patient_name }}</strong></div>
+        </div>
+        <div class="info-card">
+            <div class="info-label">Patient ID / MRN</div>
+            <div class="info-value">{{ prescription.patient_id_number }}</div>
+        </div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-card">
+            <div class="info-label">Medication Name</div>
+            <div class="info-value" style="color: #8b264e; font-weight: bold;">{{ prescription.medication_name }}</div>
+        </div>
+        <div class="info-card">
+            <div class="info-label">Dosage</div>
+            <div class="info-value">{{ prescription.dosage }}</div>
+        </div>
+    </div>
+
+    <div class="instructions-box">
+        <div class="info-label">Doctor's Instructions</div>
+        <div class="info-value">{{ prescription.instructions }}</div>
+    </div>
+
+    <div style="margin-bottom: 20px; color: #666; font-size: 14px;">
+        Prescribed by <strong>{{ prescription.doctor_name }}</strong> on {{ prescription.date_prescribed|date:"M d, Y H:i" }}
+    </div>
+
+    <!-- Status Update Form -->
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Update Status</label>
+            {{ form.status }}
+        </div>
+        <div class="form-group">
+            <label>Pharmacist Notes / Dosage Verification</label>
+            {{ form.pharmacist_notes }}
+        </div>
+        <button type="submit" class="btn-save">Save Status & Update Record</button>
+    </form>
+</div>
+
+</body>
+</html>

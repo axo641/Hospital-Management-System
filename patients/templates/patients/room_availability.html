@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hospital Room Availability</title>
+    <style>
+        body {
+            font-family: "Times New Roman", Times, serif;
+            background-color: #fff8fb;
+            color: #333;
+            padding: 30px;
+        }
+
+        .box {
+            max-width: 950px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border: 2px solid #fdb2d6;
+            border-radius: 8px;
+        }
+
+        h2 {
+            color: #b05882;
+            margin-top: 0;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            flex: 1;
+            padding: 15px;
+            background-color: #fff8fb;
+            border: 1px solid #fdb2d6;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .stat-card h4 {
+            margin: 0 0 5px 0;
+            color: #b05882;
+        }
+
+        .stat-card .number {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .filter-form {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        select, button {
+            padding: 8px;
+            border: 1px solid #d4a5bc;
+            border-radius: 4px;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        button {
+            background-color: #fdb2d6;
+            border-color: #b05882;
+            cursor: pointer;
+        }
+
+        .add-room-btn {
+            display: inline-block;
+            padding: 8px 12px;
+            background-color: #fdb2d6;
+            border: 1px solid #b05882;
+            border-radius: 4px;
+            color: #333;
+            text-decoration: none;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .add-room-btn:hover {
+            background-color: #e696be;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #fdb2d6;
+            text-align: left;
+        }
+
+        th {
+            background-color: #fff8fb;
+            color: #b05882;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .badge-available { background-color: #e6ffed; color: #155724; border: 1px solid #c3e6cb; }
+        .badge-occupied { background-color: #ffebe9; color: #721c24; border: 1px solid #f5c6cb; }
+        .badge-maintenance { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+
+        .edit-btn {
+            padding: 4px 10px;
+            background-color: #fdb2d6;
+            border: 1px solid #b05882;
+            border-radius: 4px;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .edit-btn:hover {
+            background-color: #e696be;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>Hospital Room Availability</h2>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <h4>Total Rooms</h4>
+                <div class="number">{{ total_rooms }}</div>
+            </div>
+            <div class="stat-card">
+                <h4>Available</h4>
+                <div class="number" style="color: #28a745;">{{ available_rooms }}</div>
+            </div>
+            <div class="stat-card">
+                <h4>Occupied</h4>
+                <div class="number" style="color: #dc3545;">{{ occupied_rooms }}</div>
+            </div>
+            <div class="stat-card">
+                <h4>Maintenance</h4>
+                <div class="number" style="color: #ffc107;">{{ maintenance_rooms }}</div>
+            </div>
+        </div>
+
+        <form method="GET" class="filter-form">
+            <label for="status">Status:</label>
+            <select name="status" id="status">
+                <option value="">All Statuses</option>
+                {% for code, label in room_statuses %}
+                    <option value="{{ code }}" {% if selected_status == code %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="type">Type:</label>
+            <select name="type" id="type">
+                <option value="">All Types</option>
+                {% for code, label in room_types %}
+                    <option value="{{ code }}" {% if selected_type == code %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Filter</button>
+            <a href="{% url 'room_availability' %}" style="color: #b05882; text-decoration: none;">Reset</a>
+        </form>
+
+        <div>
+            <a href="{% url 'add_room' %}" class="add-room-btn">+ Add New Room</a>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Room #</th>
+                    <th>Type</th>
+                    <th>Capacity</th>
+                    <th>Status</th>
+                    <th>Assigned Patient</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for room in rooms %}
+                <tr>
+                    <td><strong>{{ room.room_number }}</strong></td>
+                    <td>{{ room.get_room_type_display }}</td>
+                    <td>{{ room.capacity }} person(s)</td>
+                    <td>
+                        {% if room.status == 'AVAILABLE' %}
+                            <span class="badge badge-available">Available</span>
+                        {% elif room.status == 'OCCUPIED' %}
+                            <span class="badge badge-occupied">Occupied</span>
+                        {% else %}
+                            <span class="badge badge-maintenance">Maintenance</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if room.assigned_patient %}
+                            {{ room.assigned_patient.first_name }} {{ room.assigned_patient.last_name }}
+                        {% else %}
+                            <span style="color: #888; font-style: italic;">None</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'edit_room' room.id %}" class="edit-btn">Edit</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center;">No rooms found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

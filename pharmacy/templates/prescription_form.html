@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Prescription Entry</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: rgb(254, 178, 214);
+            margin: 0;
+            padding: 30px;
+        }
+        .main-container {
+            background-color: white;
+            border: 2px solid rgb(254, 178, 214);
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        h2 { color: #8b264e; margin: 0; font-size: 24px; }
+        .back-btn {
+            background-color: transparent;
+            border: 2px solid #b05882;
+            color: #8b264e;
+            padding: 6px 14px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+        }
+        .back-btn:hover { background-color: rgb(254, 178, 214); color: white; }
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-weight: bold;
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .btn-submit {
+            background-color: #b05882;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        .btn-submit:hover { background-color: #8b264e; }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="header-section">
+        <h2>New Prescription Entry</h2>
+        <a href="{% url 'pharmacy:pharmacist_prescriptions' %}" class="back-btn">← Back to Queue</a>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Select Patient</label>
+            {{ form.patient_select }}
+        </div>
+        <div class="form-group">
+            <label>Prescribing Doctor</label>
+            {{ form.doctor_name }}
+        </div>
+        <div class="form-group">
+            <label>Medication Name</label>
+            {{ form.medication_name }}
+        </div>
+        <div class="form-group">
+            <label>Dosage</label>
+            {{ form.dosage }}
+        </div>
+        <div class="form-group">
+            <label>Administration Instructions</label>
+            {{ form.instructions }}
+        </div>
+        <button type="submit" class="btn-submit">Submit Prescription to Queue</button>
+    </form>
+</div>
+
+</body>
+</html>

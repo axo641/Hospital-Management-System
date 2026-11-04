@@ -1,0 +1,143 @@
+<!--SO-19: Build and design UI where the staff can search through 
+the patient database and it displays the results effectively-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient Search</title>
+    <style>
+        body {
+            font-family: "Times New Roman", Times, serif;
+            background-color: #fff8fb;
+            color: #333;
+            padding: 30px;
+        }
+        .box {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border: 2px solid #fdb2d6;
+            border-radius: 8px;
+        }
+        h2 {
+            color: #b05882;
+            margin-top: 0;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 6px 12px;
+            background-color: #fdb2d6;
+            border: 1px solid #b05882;
+            border-radius: 4px;
+            color: #333;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-btn:hover {
+            background-color: #e696be;
+        }
+        input[type="text"] {
+            padding: 8px;
+            width: 70%;
+            font-family: "Times New Roman", Times, serif;
+            border: 1px solid #d4a5bc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #fdb2d6;
+            border: 1px solid #b05882;
+            border-radius: 4px;
+            font-family: "Times New Roman", Times, serif;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #fdb2d6;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #fff8fb;
+            color: #b05882;
+        }
+        .action-btn {
+            display: inline-block;
+            padding: 5px 8px;
+            border-radius: 3px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            margin-right: 3px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Search Patients</h2>
+    
+    <form method="GET">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search name or ID...">
+        <button type="submit">Search</button>
+    </form>
+
+    {% if query %}
+        <p>Results for "{{ query }}":</p>
+        {% if patients %}
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    {% if can_edit_patient or can_enter_results %}
+                        <th>Actions</th>
+                    {% endif %}
+                </tr>
+                {% for p in patients %}
+                <tr>
+                    <td>{{ p.id }}</td>
+                    <td>{{ p.first_name }}</td>
+                    <td>{{ p.last_name }}</td>
+                    <td>{{ p.email }}</td>
+                    {% if can_edit_patient or can_enter_results %}
+                        <td>
+                            {% if can_edit_patient %}
+                                <a href="{% url 'edit_patient' p.id %}" class="action-btn" style="background-color: #fdb2d6; border: 1px solid #b05882; color: #333;">
+                                   Edit
+                                </a>
+                            {% endif %}
+                            
+                            <a href="{% url 'patient_documents_list' p.id %}" class="action-btn" style="background-color: #d4a5bc; border: 1px solid #b05882; color: white;">
+                                + Documents
+                            </a>
+
+                            {% if can_enter_results %}
+                                <a href="{% url 'enter_test_results' p.id %}" class="action-btn" style="background-color: #b05882; border: 1px solid #7c3a5a; color: white;">
+                                   + Lab
+                                </a>
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>No patients found.</p>
+        {% endif %}
+    {% endif %}
+
+    <div>
+        <a href="{% url 'home' %}" class="back-btn">Back to Dashboard</a>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Medical Records</title>
+    <style>
+        body {
+            font-family: "Times New Roman", Times, serif;
+            background-color: #fff8fb;
+            color: #333;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border: 2px solid #fdb2d6;
+            border-radius: 8px;
+        }
+
+        h2 {
+            color: #b05882;
+            margin-top: 0;
+        }
+
+        .button-group {
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            background-color: #fdb2d6;
+            border: 1px solid #b05882;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-family: "Times New Roman", Times, serif;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            background-color: #f59bc8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #fdb2d6;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #fdb2d6;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fff8fb;
+        }
+
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .actions a {
+            padding: 5px 10px;
+            background-color: #fdb2d6;
+            border: 1px solid #b05882;
+            border-radius: 3px;
+            text-decoration: none;
+            color: white;
+            font-size: 12px;
+        }
+
+        .actions a:hover {
+            background-color: #f59bc8;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #b05882;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>View Medical Records</h2>
+
+        <div class="button-group">
+            <a href="/" class="btn">Back to Dashboard</a>
+        </div>
+
+        {% if patients %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for patient in patients %}
+                    <tr>
+                        <td>{{ patient.first_name }}</td>
+                        <td>{{ patient.last_name }}</td>
+                        <td>{{ patient.email }}</td>
+                        <td>{{ patient.phone_number }}</td>
+                        <td>
+                            <div class="actions">
+                                <a href="/patients/medical-records/{{ patient.id }}/">View Records</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-message">
+                <p>No patients found.</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
