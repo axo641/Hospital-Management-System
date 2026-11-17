@@ -1,6 +1,3 @@
-<!--SO-19: Build and design UI where the staff can search through 
-the patient database and it displays the results effectively-->
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -75,6 +72,7 @@ the patient database and it displays the results effectively-->
             font-size: 14px;
             font-weight: bold;
             margin-right: 3px;
+            margin-bottom: 3px;
         }
     </style>
 </head>
@@ -97,7 +95,7 @@ the patient database and it displays the results effectively-->
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Email</th>
-                    {% if can_edit_patient or can_enter_results %}
+                    {% if can_edit_patient or can_enter_results or user_role != 'PATIENT' %}
                         <th>Actions</th>
                     {% endif %}
                 </tr>
@@ -107,11 +105,11 @@ the patient database and it displays the results effectively-->
                     <td>{{ p.first_name }}</td>
                     <td>{{ p.last_name }}</td>
                     <td>{{ p.email }}</td>
-                    {% if can_edit_patient or can_enter_results %}
+                    {% if can_edit_patient or can_enter_results or user_role != 'PATIENT' %}
                         <td>
                             {% if can_edit_patient %}
                                 <a href="{% url 'edit_patient' p.id %}" class="action-btn" style="background-color: #fdb2d6; border: 1px solid #b05882; color: #333;">
-                                   Edit
+                                    Edit
                                 </a>
                             {% endif %}
                             
@@ -121,9 +119,14 @@ the patient database and it displays the results effectively-->
 
                             {% if can_enter_results %}
                                 <a href="{% url 'enter_test_results' p.id %}" class="action-btn" style="background-color: #b05882; border: 1px solid #7c3a5a; color: white;">
-                                   + Lab
+                                    + Lab
                                 </a>
                             {% endif %}
+
+                            <!-- RESTORED VISIT HISTORY BUTTON -->
+                            <a href="{% url 'visits:patient_history' p.id %}" class="action-btn" style="background-color: #8b264e; border: 1px solid #5a1832; color: white;">
+                                Visit History
+                            </a>
                         </td>
                     {% endif %}
                 </tr>

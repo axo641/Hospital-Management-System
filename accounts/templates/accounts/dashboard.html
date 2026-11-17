@@ -137,6 +137,12 @@
                         <a href="/patients/search/">Enter/View lab test results</a>
                     </div>
                 {% endif %}
+
+                {% if user_role != 'PATIENT' %}
+                    <div class="menu-item">
+                        <a href="/patients/search/">Patient Visit History</a>
+                    </div>
+                {% endif %}
                 
                 {% if 'manage_staff' in role_perms %}
                     <div class="menu-item">
@@ -152,6 +158,13 @@
                     <div class="menu-item">
                         <a href="{% url 'invoice_list' %}">
                             Manage Patient Invoices
+                        </a>
+                    </div>
+
+                    <!-- NEW VISIT BILLING & INVOICE HUB LINK -->
+                    <div class="menu-item">
+                        <a href="{% url 'visits:admin_billing' %}">
+                            Visit Billing & Generate Invoices
                         </a>
                     </div>
 
@@ -177,7 +190,6 @@
                     </div>
                 {% endif %}
 
-                <!-- MOVED TO THE BOTTOM OF THE MENU -->
                 <div class="menu-item">
                     <a href="{% url 'audit_logs' %}">View System Audit Logs</a>
                 </div>

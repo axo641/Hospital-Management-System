@@ -27,6 +27,7 @@ urlpatterns = [
     path('appointments/', include('appointments.urls')),
     path('pharmacy/', include('pharmacy.urls')),  
     path('', dashboard, name='home'),
+    path('visits/', include('visits.urls')),
 ]
 
 if settings.DEBUG:

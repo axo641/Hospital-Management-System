@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Patient Visit History - {{ patient }}</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: rgb(254, 178, 214);
+            margin: 0;
+            padding: 30px;
+        }
+        .main-container {
+            background-color: white;
+            border: 2px solid rgb(254, 178, 214);
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 1000px;
+            margin: 0 auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        h2 { color: #8b264e; margin: 0; font-size: 26px; }
+        .back-btn {
+            background-color: transparent;
+            border: 2px solid #b05882;
+            color: #8b264e;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+        }
+        .back-btn:hover { background-color: rgb(254, 178, 214); color: white; }
+        .patient-card {
+            background-color: #fff8fb;
+            border: 1px solid rgb(254, 178, 214);
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+        .visit-card {
+            border: 1px solid #e0e0e0;
+            border-left: 5px solid #b05882;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .visit-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            color: #8b264e;
+            margin-bottom: 10px;
+            font-size: 17px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 8px;
+        }
+        .visit-meta { color: #666; font-size: 14px; margin-bottom: 10px; }
+        .empty-state { text-align: center; padding: 40px; color: #777; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="header-section">
+        <div>
+            <h2>Patient Visit History</h2>
+            <p style="color: #666; margin: 5px 0 0 0;">Chronological medical encounter record</p>
+        </div>
+        <div>
+            <a href="/patients/search/" class="back-btn">Back to Patient Search</a>
+        </div>
+    </div>
+
+    <div class="patient-card">
+        <strong>Patient Name:</strong> {{ patient }}<br>
+        <span style="color: #666; font-size: 14px;">Patient ID: {{ patient.id }}</span>
+    </div>
+
+    <div style="font-weight: bold; font-size: 18px; color: #333; margin-bottom: 15px;">
+        Visit Timeline (Most Recent First)
+    </div>
+
+    {% for visit in visits %}
+    <div class="visit-card">
+        <div class="visit-header">
+            <span>Diagnosis: {{ visit.diagnosis }}</span>
+            <span style="font-size: 14px; color: #555;">{{ visit.visit_date|date:"M d, Y H:i" }}</span>
+        </div>
+        <div class="visit-meta">
+            <strong>Treating Doctor:</strong> {{ visit.doctor_name }} 
+            {% if visit.appointment %} | <strong>Linked Appointment ID:</strong> #{{ visit.appointment.pk }}{% endif %}
+            | <strong>Base Visit Fee:</strong> ${{ visit.visit_price }}
+        </div>
+        <div style="color: #333; font-size: 15px; line-height: 1.5; margin-bottom: 15px;">
+            <strong>Treatment Notes:</strong><br>
+            {{ visit.treatment_notes }}
+        </div>
+
+        <!-- VISIT COMPLETION & INVOICE STATUS BAR -->
+        <div style="border-top: 1px solid #f0f0f0; padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+            {% if visit.is_completed %}
+                <span style="color: #2e7d32; font-weight: bold; font-size: 14px;">
+                    ✓ Visit Completed — Billing Status: {{ visit.invoice.get_status_display }} (${{ visit.invoice.amount }})
+                </span>
+            {% else %}
+                <span style="color: #b05882; font-style: italic; font-size: 14px;">Status: In Progress</span>
+                <form method="POST" action="{% url 'visits:complete_visit' visit.pk %}" style="margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit" style="background-color: #b05882; color: white; border: none; padding: 7px 14px; border-radius: 4px; font-family: 'Times New Roman', Times, serif; font-weight: bold; cursor: pointer;">
+                        Complete Visit & Request Invoice
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        No recorded medical visits found for this patient. Visits are logged automatically upon appointment check-in.
+    </div>
+    {% endfor %}
+</div>
+
+</body>
+</html>

@@ -10,7 +10,7 @@ from .models import Appointment
 from .models import Patient
 from accounts.permissions import permission_required_for, has_permission
 from django.db.models import Count
-
+from visits.models import PatientVisit
 
 
 @login_required
@@ -120,6 +120,21 @@ def check_patient_in(request, appointmentID):
         appointment.is_checked_in = True
         appointment.arrival_time = timezone.now()
         appointment.save()
+
+        # Automatically create a PatientVisit record if one doesn't already exist for this appointment
+        if appointment.patient and not PatientVisit.objects.filter(appointment=appointment).exists():
+            doctor_display = (
+                appointment.doctor.get_full_name().strip()
+                if hasattr(appointment.doctor, 'get_full_name') and appointment.doctor.get_full_name().strip()
+                else getattr(appointment.doctor, 'username', 'Attending Physician')
+            )
+            PatientVisit.objects.create(
+                patient=appointment.patient,
+                appointment=appointment,
+                doctor_name=doctor_display,
+                diagnosis=getattr(appointment, 'reason', None) or 'Scheduled Appointment Check-In',
+                treatment_notes='Automated clinical encounter record generated upon patient check-in.'
+            )
 
         return redirect('appointment_list')
 
