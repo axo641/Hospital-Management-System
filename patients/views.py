@@ -72,10 +72,14 @@ def medical_records_list(request):
 @login_required
 @permission_required_for('view_medical_records')
 def patient_medical_records(request, patient_id):
-    """Display all medical records for a specific patient"""
     patient = get_object_or_404(Patient, id=patient_id)
     medical_records = patient.medical_records.all()
-    
+    AuditLog.objects.create(
+        user=request.user,
+        action="Viewed Medical Records",
+        details=f"Patient ID: {patient.id}"
+    )
+
     return render(request, 'patients/patient_medical_records.html', {
         'patient': patient,
         'medical_records': medical_records,
@@ -93,6 +97,11 @@ def add_medical_record(request, patient_id):
             medical_record = form.save(commit=False)
             medical_record.patient = patient
             medical_record.save()
+            AuditLog.objects.create(
+                user=request.user,
+                action="Added Medical Record",
+                details=f"Patient ID: {patient.id}, Record ID: {medical_record.id}"
+            )
             return redirect('patient_medical_records', patient_id=patient.id)
     else:
         form = MedicalRecordForm()
@@ -108,11 +117,18 @@ def delete_medical_record(request, record_id):
     """Delete a medical record"""
     medical_record = get_object_or_404(MedicalRecord, id=record_id)
     patient_id = medical_record.patient.id
-    
     if request.method == 'POST':
+        AuditLog.objects.create(
+            user=request.user,
+            action="Deleted Medical Record",
+            details=f"Patient ID: {patient_id}, Record ID: {medical_record.id}"
+        )
         medical_record.delete()
-        return redirect('patient_medical_records', patient_id=patient_id)
-    
+        return redirect(
+            'patient_medical_records',
+            patient_id=patient_id
+        )
+
     return render(request, 'patients/delete_medical_record.html', {
         'medical_record': medical_record,
     })
@@ -298,14 +314,22 @@ def edit_room(request, room_id):
         'room': room,
     })
 
+
 @login_required
 def audit_logs_view(request):
+    if request.user.role != 'ADMIN' and not request.user.is_superuser:
+        raise PermissionDenied
+
     logs = AuditLog.objects.all()[:150]
+
     return render(request, 'patients/audit_logs.html', {
         'logs': logs,
     })
 
+
+
 @login_required
+@permission_required_for('view_medical_records')
 def upload_patient_document(request, patient_id):
     patient = get_object_or_404(Patient, id=patient_id)
     
@@ -333,7 +357,9 @@ def upload_patient_document(request, patient_id):
         'patient': patient,
     })
 
+
 @login_required
+@permission_required_for('view_medical_records')
 def patient_documents_list(request, patient_id):
     patient = get_object_or_404(Patient, id=patient_id)
     documents = patient.documents.all()
