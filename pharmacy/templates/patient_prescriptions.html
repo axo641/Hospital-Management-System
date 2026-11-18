@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Prescriptions</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: rgb(254, 178, 214);
+            margin: 0;
+            padding: 30px;
+        }
+        .main-container {
+            background-color: white;
+            border: 2px solid rgb(254, 178, 214);
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        h2 { color: #8b264e; margin: 0; }
+        .back-btn {
+            background-color: transparent;
+            border: 2px solid #b05882;
+            color: #8b264e;
+            padding: 6px 14px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px 15px; border-bottom: 1px solid #e0e0e0; text-align: left; }
+        th { background-color: #f9f0f4; color: #8b264e; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .badge-pending { background-color: #fff3cd; color: #856404; }
+        .badge-approved { background-color: #cce5ff; color: #004085; }
+        .badge-dispensed { background-color: #d4edda; color: #155724; }
+        .badge-rejected { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="header-section">
+        <h2>My Prescriptions & Pharmacy Status</h2>
+        <a href="/" class="back-btn">Main Menu Dashboard</a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Date Prescribed</th>
+                <th>Medication</th>
+                <th>Dosage</th>
+                <th>Instructions</th>
+                <th>Status</th>
+                <th>Pharmacist Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in prescriptions %}
+            <tr>
+                <td>{{ p.date_prescribed|date:"M d, Y" }}</td>
+                <td><strong>{{ p.medication_name }}</strong></td>
+                <td>{{ p.dosage }}</td>
+                <td>{{ p.instructions }}</td>
+                <td>
+                    {% if p.status == 'PENDING' %}<span class="badge badge-pending">Pending Review</span>
+                    {% elif p.status == 'APPROVED' %}<span class="badge badge-approved">Approved</span>
+                    {% elif p.status == 'DISPENSED' %}<span class="badge badge-dispensed">Dispensed</span>
+                    {% elif p.status == 'REJECTED' %}<span class="badge badge-rejected">Rejected</span>
+                    {% endif %}
+                </td>
+                <td>{{ p.pharmacist_notes|default:"None" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 30px; color: #777; font-style: italic;">
+                    You have no prescriptions on record.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

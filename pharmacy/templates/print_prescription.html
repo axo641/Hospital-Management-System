@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prescription Form - {{ prescription.medication_name }}</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 40px;
+        }
+        .prescription-sheet {
+            background-color: white;
+            border: 2px solid #8b264e;
+            padding: 40px;
+            border-radius: 8px;
+            max-width: 700px;
+            margin: 0 auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .clinic-header {
+            text-align: center;
+            border-bottom: 2px solid #8b264e;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        .clinic-header h1 {
+            color: #8b264e;
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+        .rx-symbol {
+            font-size: 40px;
+            font-weight: bold;
+            color: #8b264e;
+            font-family: serif;
+            margin: 15px 0 5px 0;
+        }
+        .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+            font-size: 16px;
+            background-color: #fff8fb;
+            padding: 15px;
+            border: 1px solid rgb(254, 178, 214);
+            border-radius: 6px;
+        }
+        .prescription-body {
+            margin-bottom: 40px;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            border-top: 1px solid #ccc;
+            padding-top: 15px;
+        }
+        .print-btn-bar {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .btn-print {
+            background-color: #b05882;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Times New Roman', Times, serif;
+        }
+        .btn-print:hover { background-color: #8b264e; }
+        @media print {
+            body { background-color: white; padding: 0; }
+            .prescription-sheet { border: none; box-shadow: none; padding: 0; }
+            .print-btn-bar { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="prescription-sheet">
+    <div class="clinic-header">
+        <h1>HOSPITAL MANAGEMENT SYSTEM</h1>
+        <p style="color: #666; margin: 5px 0 0 0;">Official Medical Prescription & Pharmacy Form</p>
+    </div>
+
+    <div class="meta-grid">
+        <div><strong>Patient Name:</strong> {{ prescription.patient_name }}</div>
+        <div><strong>Patient ID / MRN:</strong> {{ prescription.patient_id_number }}</div>
+        <div><strong>Prescribing Doctor:</strong> {{ prescription.doctor_name }}</div>
+        <div><strong>Date Prescribed:</strong> {{ prescription.date_prescribed|date:"M d, Y H:i" }}</div>
+    </div>
+
+    <div class="rx-symbol">℞</div>
+
+    <div class="prescription-body">
+        <div style="font-size: 22px; font-weight: bold; color: #333; margin-bottom: 10px;">
+            {{ prescription.medication_name }} — <span style="color: #8b264e;">{{ prescription.dosage }}</span>
+        </div>
+        <div style="background-color: #fafafa; padding: 15px; border-left: 4px solid #b05882; border-radius: 4px;">
+            <strong>Directions for Use:</strong><br>
+            {{ prescription.instructions }}
+        </div>
+    </div>
+
+    <div class="signature-section">
+        <div>
+            <p style="margin: 0; color: #666; font-size: 14px;">Pharmacy Status: <strong>{{ prescription.get_status_display }}</strong></p>
+        </div>
+        <div style="text-align: right;">
+            <div style="border-bottom: 1px solid #333; width: 220px; margin-bottom: 5px; height: 30px;"></div>
+            <span style="font-size: 14px; color: #555;">Physician Signature</span>
+        </div>
+    </div>
+</div>
+
+<div class="print-btn-bar">
+    <button onclick="window.print()" class="btn-print">🖨️ Print Prescription Form</button>
+    <br><br>
+    <a href="javascript:history.back()" style="color: #8b264e; text-decoration: none; font-weight: bold;">← Go Back</a>
+</div>
+
+</body>
+</html>

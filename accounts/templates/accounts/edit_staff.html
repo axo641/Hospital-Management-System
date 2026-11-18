@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Staff</title>
+    <style>
+        body {
+            font-family: "Times New Roman", Times, serif;
+            background-color: #fff8fb;
+            color: #333;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border: 2px solid #fdb2d6;
+            border-radius: 8px;
+        }
+
+        h2 {
+            color: #b05882;
+            margin-top: 0;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #d4a5bc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #fdb2d6;
+            border: 1px solid #b05882;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: "Times New Roman", Times, serif;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #f59bc8;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .button-group button {
+            flex: 1;
+        }
+
+        .cancel-btn {
+            background-color: #ccc;
+            border-color: #999;
+        }
+
+        .cancel-btn:hover {
+            background-color: #bbb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Staff: {{ staff.first_name }} {{ staff.last_name }}</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="button-group">
+                <button type="submit">Save Changes</button>
+                <button type="button" class="cancel-btn" onclick="window.location='/accounts/staff/'">Cancel</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

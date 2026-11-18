@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prescribe Medication - Visit for {{ patient }}</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: rgb(254, 178, 214);
+            margin: 0;
+            padding: 30px;
+        }
+        .main-container {
+            background-color: white;
+            border: 2px solid rgb(254, 178, 214);
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        h2 { color: #8b264e; margin: 0; font-size: 26px; }
+        .back-btn {
+            background-color: transparent;
+            border: 2px solid #b05882;
+            color: #8b264e;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+        }
+        .back-btn:hover { background-color: rgb(254, 178, 214); color: white; }
+        .patient-card {
+            background-color: #fff8fb;
+            border: 1px solid rgb(254, 178, 214);
+            padding: 12px 20px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            color: #8b264e;
+            margin-bottom: 6px;
+            font-size: 16px;
+        }
+        .errorlist {
+            color: #d9534f;
+            list-style: none;
+            padding: 0;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .btn-submit {
+            background-color: #b05882;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-submit:hover { background-color: #8b264e; }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="header-section">
+        <div>
+            <h2>Prescribe Medication for Visit</h2>
+            <p style="color: #666; margin: 5px 0 0 0;">Add medication linked to patient encounter</p>
+        </div>
+        <div>
+            <a href="{% url 'visits:patient_history' patient.pk %}" class="back-btn">Back to History</a>
+        </div>
+    </div>
+
+    <div class="patient-card">
+        <strong>Patient:</strong> {{ patient }} &nbsp;|&nbsp; <span style="color: #666;">Diagnosis: {{ visit.diagnosis|truncatechars:50 }}</span>
+    </div>
+
+    <form method="POST" autocomplete="off">
+        {% csrf_token %}
+        
+        {{ form.non_field_errors }}
+
+        <!-- Medication Catalog Dropdown (SO-37 auto-fill) -->
+        <div class="form-group">
+            <label for="{{ form.medication_select.id_for_label }}">{{ form.medication_select.label }}</label>
+            {{ form.medication_select }}
+        </div>
+
+        <hr style="border: none; border-top: 1px dashed #ddd; margin: 20px 0;">
+
+        {% for field in form %}
+            {% if field.name != 'medication_select' %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <ul class="errorlist">
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        <div style="margin-top: 30px; display: flex; justify-content: flex-end; gap: 15px;">
+            <a href="{% url 'visits:patient_history' patient.pk %}" style="align-self: center; color: #666; text-decoration: none;">Cancel</a>
+            <button type="submit" class="btn-submit">Save Prescription</button>
+        </div>
+    </form>
+</div>
+
+<script type="application/json" id="med-catalog-data">
+    {{ med_catalog_json|safe }}
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let medCatalog = {};
+        try {
+            const dataElem = document.getElementById('med-catalog-data');
+            if (dataElem) {
+                medCatalog = JSON.parse(dataElem.textContent);
+            }
+        } catch (err) {
+            console.error("Error parsing medication catalog:", err);
+        }
+
+        const selectElem = document.getElementById('id_medication_select');
+        
+        if (selectElem) {
+            selectElem.addEventListener('change', function() {
+                const medId = this.value;
+                if (medCatalog && medCatalog[medId]) {
+                    const nameField = document.getElementById('id_medication_name');
+                    const dosageField = document.getElementById('id_dosage');
+                    const instrField = document.getElementById('id_instructions');
+                    
+                    if (nameField) nameField.value = medCatalog[medId].name;
+                    if (dosageField) dosageField.value = medCatalog[medId].dosage;
+                    if (instrField) instrField.value = medCatalog[medId].instructions;
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

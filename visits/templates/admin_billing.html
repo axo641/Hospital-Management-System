@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Visit Billing & Invoices</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: rgb(254, 178, 214);
+            margin: 0;
+            padding: 30px;
+        }
+        .main-container {
+            background-color: white;
+            border: 2px solid rgb(254, 178, 214);
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 1050px;
+            margin: 0 auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        h2 { color: #8b264e; margin: 0; font-size: 26px; }
+        .back-btn {
+            background-color: transparent;
+            border: 2px solid #b05882;
+            color: #8b264e;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-btn:hover { background-color: rgb(254, 178, 214); color: white; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #fdb2d6;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #fff8fb;
+            color: #8b264e;
+        }
+        .badge-requested {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        .badge-generated {
+            background-color: #cce5ff;
+            color: #004085;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        .badge-paid {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        .action-btn {
+            background-color: #b05882;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .action-btn:hover { background-color: #8b264e; }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="header-section">
+        <div>
+            <h2>Visit Billing & Invoice Management</h2>
+            <p style="color: #666; margin: 5px 0 0 0;">Review completed patient visits and generate invoices</p>
+        </div>
+        <a href="{% url 'home' %}" class="back-btn">Back to Dashboard</a>
+    </div>
+
+    <table>
+        <tr>
+            <th>Invoice #</th>
+            <th>Patient</th>
+            <th>Doctor & Visit Date</th>
+            <th>Visit Price</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        {% for inv in invoices %}
+        <tr>
+            <td>#{{ inv.id }}</td>
+            <td><strong>{{ inv.patient }}</strong></td>
+            <td>
+                {{ inv.visit.doctor_name }}<br>
+                <span style="font-size: 13px; color: #666;">{{ inv.visit.visit_date|date:"M d, Y H:i" }}</span>
+            </td>
+            <td><strong>${{ inv.amount }}</strong></td>
+            <td>
+                {% if inv.status == 'REQUESTED' %}
+                    <span class="badge-requested">Invoice Requested</span>
+                {% elif inv.status == 'GENERATED' %}
+                    <span class="badge-generated">Generated</span>
+                {% else %}
+                    <span class="badge-paid">Paid</span>
+                {% endif %}
+            </td>
+            <td>
+                <a href="{% url 'visits:generate_invoice' inv.pk %}" class="action-btn">
+                    {% if inv.status == 'REQUESTED' %}Generate Invoice{% else %}View / Edit Bill{% endif %}
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" style="text-align: center; padding: 30px; color: #777; font-style: italic;">
+                No invoice requests found. Invoices appear automatically when staff mark a patient visit as completed.
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+</body>
+</html>
